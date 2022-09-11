@@ -51,20 +51,26 @@
             $c = new Conectar();
             $conexion=$c->conexion();
             $result=mysqli_query($conexion,"SELECT * FROM productos WHERE id=$id");
+            $vnt=0;
+
             if($row=mysqli_fetch_array($result)){
-                if($row['stock'] < 1 || $row['stock'] == ''){
+                if($row['stock'] < 1 ){
                     echo "<div class='alert alert-danger' role='alert'>No tenemos productos en Stock</div>";
+                    $vnt=0;
+
                 }else{
                     $total=($cant* $row['precio']);
                     $upd_cant=($row['stock']-$cant);
                     $result=mysqli_query($conexion,"UPDATE `productos` SET `stock`='$upd_cant' WHERE id=$id");
                     $result=mysqli_query($conexion,"INSERT INTO `registro`(`id_producto`, `precio`, `cant`) VALUES ('$id','$total','$cant')");
                     echo "<script language='javascript'>window.parent.location='http://localhost/coffee_a_click/index.php?pag=listar';</script>";
-
+                    $vnt=1;
                 }
                 
             }
-            echo "<div class='alert alert-danger' role='alert'>Error verifique su consulta</div>";
+            if($vnt==0){
+                echo "<div class='alert alert-danger' role='alert'>Error verifique su consulta</div>";
+            }
             return $result;
 
         }
